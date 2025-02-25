@@ -1,9 +1,19 @@
 const express = require("express");
-const Router = express.Router();
-const adminController = require("../controllers/adminlogin.Controller");
+const adminLogin = require("../controllers/adminlogin.Controller");
+const protect = require("../middleware/authMiddleware");
 
-// Route to handle admin login
+const router = express.Router();
 
-Router.post("/login", adminController);
+//login route
+router.post("/login", adminLogin);
+router.get("/dashboard", protect, (req, res) => {
+  res.json({ message: "Welcome to the Admin Dashboard!" });
+});
 
-module.exports = Router;
+// Logout Route (Clears cookie)
+router.post("/logout", (req, res) => {
+  res.clearCookie("jwt");
+  res.json({ message: "Logged out successfully" });
+});
+
+module.exports = router;
