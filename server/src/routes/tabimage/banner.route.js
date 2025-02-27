@@ -1,11 +1,11 @@
 const express = require("express");
 const Router = express.Router();
-const bannerController = require("../../controllers/pcimagecontrollers/banner.controller");
+const bannerController = require("../../controllers/tabletimagecontrollers/banner.controller");
 const upload = require("../../middleware/multer.middleware");
 // Upload Banner
-Router.post("/pc/update", upload.single("file"), bannerController.uploadBanner);
+Router.post("/update", upload.single("file"), bannerController.uploadBanner);
 
 //Get Banner
-Router.get("/pc/get", bannerController.getBanner);
+Router.get("/get", bannerController.getBanner);
 
 module.exports = Router;

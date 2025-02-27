@@ -4,12 +4,12 @@ const MatchbannerController = require("../../controllers/pcimagecontrollers/matc
 const upload = require("../../middleware/multer.middleware");
 // Upload Banner
 Router.post(
-  "/pc/update",
+  "/update",
   upload.single("file"),
   MatchbannerController.uploadBanner
 );
 
 //Get Banner
-Router.get("/pc/get", MatchbannerController.getBanner);
+Router.get("/get", MatchbannerController.getBanner);
 
 module.exports = Router;

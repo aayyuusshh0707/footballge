@@ -4,12 +4,12 @@ const SidebannerController = require("../../controllers/pcimagecontrollers/sideb
 const upload = require("../../middleware/multer.middleware");
 // Upload Banner
 Router.post(
-  "/pc/update",
+  "/update",
   upload.single("file"),
   SidebannerController.uploadBanner
 );
 
 //Get Banner
-Router.get("/pc/get", SidebannerController.getBanner);
+Router.get("/get", SidebannerController.getBanner);
 
 module.exports = Router;
