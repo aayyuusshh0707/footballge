@@ -4,7 +4,7 @@ import { Container, TextField, Button, Typography, Box, Paper } from "@mui/mater
 const Adminlogin = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
+  
   const handleLogin = async (e) => {
     e.preventDefault();
     const res = await fetch("http://localhost:8000/api/admin/login", {
@@ -21,7 +21,6 @@ const Adminlogin = () => {
       alert(data.message);
     }
   };
-
   return (
     <Container maxWidth="xs">
       <Paper elevation={10} sx={{ p: 3, mt: 10, textAlign: "center" }}>

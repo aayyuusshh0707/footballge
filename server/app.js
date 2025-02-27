@@ -28,11 +28,11 @@ const buttononeRoute = require("./src/routes/buttons/buttonone.route");
 const buttontwoRoute = require("./src/routes/buttons/buttontwo.route");
 const buttonthreeRoute = require("./src/routes/buttons/buttonthree.route");
 //for Banner img
-const bannerRoute = require("./src/routes/images/banner.route");
-const sidebannerRoute = require("./src/routes/images/sideban.route");
-const sidebannertwoRoute = require("./src/routes/images/sidebantwo.route");
-const sidelongbannerRoute = require("./src/routes/images/sidelongban.route");
-const matchbannerRoute = require("./src/routes/images/matchban.route");
+const bannerRoute = require("./src/routes/pcimage/banner.route");
+const sidebannerRoute = require("./src/routes/pcimage/sideban.route");
+const sidebannertwoRoute = require("./src/routes/pcimage/sidebantwo.route");
+const sidelongbannerRoute = require("./src/routes/pcimage/sidelongban.route");
+const matchbannerRoute = require("./src/routes/pcimage/matchban.route");
 
 //route declare
 app.use("/api/admin", adminRoute); //admin login
