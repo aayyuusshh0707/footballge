@@ -57,21 +57,21 @@ app.use("/api/button-two", buttontwoRoute);
 app.use("/api/button-three", buttonthreeRoute);
 
 //PC banner img route
-app.use("/api/d-banner", PCbannerRoute);
-app.use("/api/d-sidebanner", PCsidebannerRoute);
-app.use("/api/d-sidebannertwo", PCsidebannertwoRoute);
-app.use("/api/d-sidelongbanner", PCsidelongbannerRoute);
-app.use("/api/d-matchbanner", PCmatchbannerRoute);
+app.use("/api/desktop-banner", PCbannerRoute);
+app.use("/api/desktop-sidebanner", PCsidebannerRoute);
+app.use("/api/desktop-sidebannertwo", PCsidebannertwoRoute);
+app.use("/api/desktop-sidelongbanner", PCsidelongbannerRoute);
+app.use("/api/desktop-matchbanner", PCmatchbannerRoute);
 
 //Tablet banner img route
-app.use("/api/t-banner", TabletbannerRoute);
-app.use("/api/t-sidebanner", TabletsidebannerRoute);
-app.use("/api/t-sidebannertwo", TabletsidebannertwoRoute);
-app.use("/api/t-sidelongbanner", TabletsidelongbannerRoute);
-app.use("/api/t-matchbanner", TabletmatchbannerRoute);
+app.use("/api/ipad-banner", TabletbannerRoute);
+app.use("/api/ipad-sidebanner", TabletsidebannerRoute);
+app.use("/api/ipad-sidebannertwo", TabletsidebannertwoRoute);
+app.use("/api/ipad-sidelongbanner", TabletsidelongbannerRoute);
+app.use("/api/ipad-matchbanner", TabletmatchbannerRoute);
 
-//PC banner img route
-app.use("/api/p-banner", MobilebannerRoute);
+//Mobile banner img route
+app.use("/api/mobile-banner", MobilebannerRoute);
 app.use("/api/p-sidebanner", MobilesidebannerRoute);
 app.use("/api/p-sidebannertwo", MobilesidebannertwoRoute);
 app.use("/api/p-sidelongbanner", MobilesidelongbannerRoute);
