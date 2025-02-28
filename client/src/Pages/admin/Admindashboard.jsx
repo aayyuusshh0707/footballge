@@ -81,8 +81,8 @@ const Dashboard = () => {
   };
 
   return (
-    <div style={{ backgroundColor: "#121212", minHeight: "100vh" }}>
-    <Container  sx={{ backgroundColor: "#121212", color: "#fff", p: 3, borderRadius: 3 }}>
+    <div style={{ backgroundColor: "#1e1e1e", minHeight: "100vh" }}>
+    <Container  sx={{  color: "#fff", p: 3, borderRadius: 3 }}>
       <Paper elevation={10} sx={{ p: 4, textAlign: "center", borderRadius: 3, backgroundColor: "#1e1e1e" }}>
         <Typography variant="h4" sx={{ mb: 2, fontWeight: "bold", color: "#fff" }}>Admin Dashboard</Typography>
         <Typography variant="body1" sx={{ mb: 3, color: "#aaa" }}>Manage banners efficiently from this panel.</Typography>
@@ -110,6 +110,7 @@ const Dashboard = () => {
             </Grid>
           ))}
         </Grid>
+        <NavButtonLinks />
       </Paper>
 
       {/* Modal Dialog */}
@@ -141,7 +142,7 @@ const Dashboard = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      <NavButtonLinks />
+
     </Container>
     </div>
   );

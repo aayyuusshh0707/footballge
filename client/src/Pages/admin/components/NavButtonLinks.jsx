@@ -1,5 +1,15 @@
 import React, { useState } from "react";
-import { Paper, Button, Typography, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from "@mui/material";
+import {
+  Paper,
+  Button,
+  Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Box,
+} from "@mui/material";
 
 const NavButtonLinks = () => {
   const [linkDialogOpen, setLinkDialogOpen] = useState(false);
@@ -13,6 +23,7 @@ const NavButtonLinks = () => {
 
   const handleLinkClose = () => {
     setLinkDialogOpen(false);
+    setLink("");
   };
 
   const handleLinkSave = async () => {
@@ -31,25 +42,55 @@ const NavButtonLinks = () => {
       });
     }
     setLinkDialogOpen(false);
+    setLink("");
   };
 
   return (
-    <Paper elevation={3} sx={{ p: 2, mt: 4, textAlign: "center" }}>
-      <Typography variant="h6">Basic Link</Typography>
-      <Button variant="contained" sx={{ m: 1 }} onClick={() => handleLinkOpen("button-one")}>
-        Button 1 (Add/Remove)
-      </Button>
-      <Button variant="contained" sx={{ m: 1 }} onClick={() => handleLinkOpen("button-two")}>
-        Button 2 (Add/Remove)
-      </Button>
-      <Button variant="contained" sx={{ m: 1 }} onClick={() => handleLinkOpen("button-three")}>
-        Button 3 (Add/Remove)
-      </Button>
+    <Paper
+      elevation={3}
+      sx={{
+        p: 3,
+        mt: 4,
+        textAlign: "center",
+        borderRadius: 3,
+        backgroundColor: "#252525",
+        color: "#fff",
+      }}
+    >
+      <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold", color: "#fff" }}>
+        Manage Links
+      </Typography>
+
+      <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
+        <Button
+          variant="contained"
+          sx={{ backgroundColor: "#007bff", borderRadius: 2 }}
+          onClick={() => handleLinkOpen("button-one")}
+        >
+          Button 1 (Add/Remove)
+        </Button>
+        <Button
+          variant="contained"
+          sx={{ backgroundColor: "#007bff", borderRadius: 2 }}
+          onClick={() => handleLinkOpen("button-two")}
+        >
+          Button 2 (Add/Remove)
+        </Button>
+        <Button
+          variant="contained"
+          sx={{ backgroundColor: "#007bff", borderRadius: 2 }}
+          onClick={() => handleLinkOpen("button-three")}
+        >
+          Button 3 (Add/Remove)
+        </Button>
+      </Box>
 
       {/* Link Input Dialog */}
-      <Dialog open={linkDialogOpen} onClose={handleLinkClose}>
-        <DialogTitle>Update Link for {buttonType.replace("-", " ")}</DialogTitle>
-        <DialogContent>
+      <Dialog open={linkDialogOpen} onClose={handleLinkClose} fullWidth maxWidth="sm">
+        <DialogTitle sx={{ fontWeight: "bold", backgroundColor: "#333", color: "#fff" }}>
+          Update Link for {buttonType.replace("-", " ")}
+        </DialogTitle>
+        <DialogContent sx={{ backgroundColor: "#222", color: "#fff" }}>
           <TextField
             autoFocus
             margin="dense"
@@ -58,11 +99,16 @@ const NavButtonLinks = () => {
             variant="outlined"
             value={link}
             onChange={(e) => setLink(e.target.value)}
+            sx={{ input: { color: "#fff" }, label: { color: "#bbb" } }}
           />
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleLinkClose} color="secondary">Cancel</Button>
-          <Button onClick={handleLinkSave} color="primary">Save</Button>
+        <DialogActions sx={{ backgroundColor: "#333" }}>
+          <Button onClick={handleLinkClose} color="secondary" variant="contained" sx={{ borderRadius: 2 }}>
+            Cancel
+          </Button>
+          <Button onClick={handleLinkSave} color="primary" variant="contained" sx={{ borderRadius: 2 }}>
+            Save
+          </Button>
         </DialogActions>
       </Dialog>
     </Paper>
