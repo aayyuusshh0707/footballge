@@ -20,7 +20,7 @@ const SidebannerController = {
       });
 
       // Update banner table with the new Dropbox link
-      const updateQuery = `UPDATE Phone_banners  SET file_url = ? WHERE id = 2`;
+      const updateQuery = `UPDATE phone_banners  SET file_url = ? WHERE id = 2`;
       await pool.query(updateQuery, [dropboxLink]);
 
       res
@@ -35,7 +35,7 @@ const SidebannerController = {
   getBanner: async (req, res) => {
     try {
       const [rows] = await pool.query(
-        "SELECT file_url FROM Phone_banners  WHERE id = 2"
+        "SELECT file_url FROM phone_banners  WHERE id = 2"
       );
 
       if (rows.length === 0) {

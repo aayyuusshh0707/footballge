@@ -1,6 +1,6 @@
 const express = require("express");
 const Router = express.Router();
-const SideLongbannerController = require("../../controllers/pcimagecontrollers/sideban.controller");
+const SideLongbannerController = require("../../controllers/phoneimagecontrollers/sidelong.controller");
 const upload = require("../../middleware/multer.middleware");
 // Upload Banner
 Router.post(

@@ -1,6 +1,6 @@
 const express = require("express");
 const Router = express.Router();
-const MatchbannerController = require("../../controllers/pcimagecontrollers/matchBan.controller");
+const MatchbannerController = require("../../controllers/phoneimagecontrollers/matchBan.controller");
 const upload = require("../../middleware/multer.middleware");
 // Upload Banner
 Router.post(

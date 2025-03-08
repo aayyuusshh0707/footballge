@@ -9,7 +9,7 @@ app.use(bodyParser.json());
 app.use(express.json());
 app.use(
   cors({
-    origin: ["http://localhost:5174"],
+    origin: ["http://localhost:5173"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
@@ -72,9 +72,10 @@ app.use("/api/ipad-matchbanner", TabletmatchbannerRoute);
 
 //Mobile banner img route
 app.use("/api/mobile-banner", MobilebannerRoute);
-app.use("/api/p-sidebanner", MobilesidebannerRoute);
-app.use("/api/p-sidebannertwo", MobilesidebannertwoRoute);
-app.use("/api/p-sidelongbanner", MobilesidelongbannerRoute);
-//app.use("/api/matchbanner", matchbannerRoute);
+app.use("/api/mobile-sidebanner", MobilesidebannerRoute);
+app.use("/api/mobile-sidebannertwo", MobilesidebannertwoRoute);
+app.use("/api/mobile-sidelongbanner", MobilesidelongbannerRoute);
+//app.use("/api/matchbanner", matchbannerRoute); 
+//  /api/mobile-banner/update
 
 module.exports = app;
