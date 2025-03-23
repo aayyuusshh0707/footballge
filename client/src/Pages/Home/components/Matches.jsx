@@ -1,70 +1,57 @@
 import React, { useState, useEffect } from "react";
-import { Box, Tab, CircularProgress } from "@mui/material";
-import { TabContext, TabList, TabPanel } from "@mui/lab";
+import { CircularProgress } from "@mui/material";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
+import { usePinnedLeagues } from "../../../hook/PinnedLeaguesContext"; 
+import { API_URL } from "../../../api/api";
 
-const MatchesComponent = () => {
+const MatchesComponent = ({ className }) => {
   const [value, setValue] = useState("1");
   const [liveMatches, setLiveMatches] = useState([]);
   const [upcomingMatches, setUpcomingMatches] = useState([]);
   const [finishedMatches, setFinishedMatches] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [hoveredLeague, setHoveredLeague] = useState(null);
+  const { pinnedLeagues, setPinnedLeagues } = usePinnedLeagues(); 
 
-  const API_KEY = "e707a9fba8b84e15880fc90307ba2640653124faa7f886c2b00ad099e44b857a";
-  const BASE_URL = `https://apiv3.apifootball.com/?action=get_events&APIkey=${API_KEY}`;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const today = new Date();
-        const yesterday = new Date(today);
-        const tomorrow = new Date(today);
-
-        yesterday.setDate(today.getDate() - 1);
-        tomorrow.setDate(today.getDate() + 1);
-
+        const now = new Date();
         const formatDate = (date) => date.toISOString().split("T")[0];
 
-        // Fetch live matches
-        const liveRes = await axios.get(`${BASE_URL}&match_live=1`);
-        setLiveMatches(liveRes.data || []);
+        const [liveRes, upcomingRes, finishedRes] = await Promise.all([
+          axios.get(`${API_URL}&match_live=1`),
+          axios.get(`${API_URL}&from=${formatDate(now)}&to=${formatDate(now)}`),
+          axios.get(`${API_URL}&from=${formatDate(now)}&to=${formatDate(now)}`),
+        ]);
 
-        // Fetch upcoming matches (next 1 day)
-        const upcomingRes = await axios.get(
-          `${BASE_URL}&from=${formatDate(today)}&to=${formatDate(tomorrow)}`
-        );
-        setUpcomingMatches(upcomingRes.data || []);
+        const safeArray = (data) => (Array.isArray(data) ? data : []);
 
-        // Fetch finished matches (previous 1 day)
-        const finishedRes = await axios.get(
-          `${BASE_URL}&from=${formatDate(yesterday)}&to=${formatDate(today)}`
+        setLiveMatches(safeArray(liveRes.data));
+        setUpcomingMatches(safeArray(upcomingRes.data));
+        setFinishedMatches(
+          safeArray(finishedRes.data).filter(
+            (match) => match.match_hometeam_score !== "" && match.match_awayteam_score !== ""
+          )
         );
-        const validFinishedMatches = (finishedRes.data || []).filter(
-          (match) => match.match_hometeam_score !== "" && match.match_awayteam_score !== ""
-        );
-        setFinishedMatches(validFinishedMatches);
       } catch (error) {
         console.error("Error fetching match data:", error);
       } finally {
         setLoading(false);
       }
     };
-
+   
     fetchData();
   }, []);
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
+  const handleChange = (event, newValue) => setValue(newValue);
 
-  const cleanLeagueTitle = (title) => {
-    // Remove any leading numbers, dots, or spaces
-    return title.replace(/^\d+\.\s*/, "").trim();
-  };
+  const cleanLeagueTitle = (title) => title.replace(/^\d+\.\s*/, "").trim();
 
-  // Group matches by league name. Each group will be an array of match objects.
   const groupByLeague = (matches) => {
+    if (!Array.isArray(matches)) return {};
     return matches.reduce((acc, match) => {
       const cleanedLeagueName = cleanLeagueTitle(match.league_name);
       acc[cleanedLeagueName] = acc[cleanedLeagueName] || [];
@@ -73,146 +60,152 @@ const MatchesComponent = () => {
     }, {});
   };
 
-  const renderMatchItem = (match, isLive = false, isFinished = false) => {
-    const homeScore = match.match_hometeam_score;
-    const awayScore = match.match_awayteam_score;
+  const togglePinLeague = (leagueId) => {
+    setPinnedLeagues((prev) => {
+      const updatedLeagues = prev.includes(leagueId)
+        ? prev.filter((l) => l !== leagueId)
+        : [leagueId, ...prev];
+      return updatedLeagues;
+    });
+  };
 
-    const getWinnerText = () => {
-      if (homeScore > awayScore) return `${match.match_hometeam_name} Won`;
-      if (homeScore < awayScore) return `${match.match_awayteam_name} Won`;
-      return "Draw";
-    };
+  const renderMatchItem = (match, isLive, isFinished) => {
+    const homeScore = parseInt(match.match_hometeam_score) || 0;
+    const awayScore = parseInt(match.match_awayteam_score) || 0;
+    const matchTime = match.match_time;
 
     return (
-      <motion.div
-        key={match.match_id}
+      // <motion.div
+      <div
+        key={`${match.match_id}-${match.match_hometeam_name}-${match.match_awayteam_name}`}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -10 }}
-        className="bg-gray-700 rounded-lg p-3 md:p-4 grid grid-cols-3 items-center shadow-lg"
+        className="bg-gray-700 rounded-xl p-4 grid grid-cols-2 items-center shadow-xl gap-4"
       >
-        {/* Column 1: Home Team */}
-        <div className="flex items-center space-x-2">
-          <img src={match.team_home_badge} alt="Home" className="w-6 h-6 rounded-full" />
-          <span className="text-white font-medium text-xs">{match.match_hometeam_name}</span>
+        <div className="flex flex-col space-y-2">
+          <div className="flex items-center space-x-2">
+            <img
+              src={match.team_home_badge}
+              alt={match.match_hometeam_name}
+              className="w-5 h-5 object-contain"
+            />
+            <span className="text-white font-semibold text-[12px] md:text-sm">{match.match_hometeam_name}</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <img
+              src={match.team_away_badge}
+              alt={match.match_awayteam_name}
+              className="w-5 h-5 object-contain"
+            />
+            <span className="text-white font-semibold text-[12px] md:text-sm">{match.match_awayteam_name}</span>
+          </div>
         </div>
 
-        {/* Column 2: Score or Time */}
-        <div className="flex flex-col items-center justify-center">
-          {isLive || match.match_status === "Live" ? (
-            <span className="text-sm font-bold text-green-400">
-              {homeScore} - {awayScore}
-            </span>
+        <div className="flex flex-col items-end justify-center space-y-1">
+          {isLive ? (
+            <>
+              <span className="text-white font-bold text-sm">{homeScore}</span>
+              <span className="text-white font-bold text-sm">{awayScore}</span>
+            </>
           ) : isFinished ? (
             <>
-              <p className="text-sm font-bold text-yellow-400">
-                {homeScore} - {awayScore}
-              </p>
-              <p className="text-xs text-blue-400">{getWinnerText()}</p>
+              <span className="text-yellow-400 font-bold text-sm">{homeScore}</span>
+              <span className="text-yellow-400 font-bold text-sm">{awayScore}</span>
             </>
           ) : (
-            <span className="text-gray-300 text-xs">{match.match_time}</span>
+            <span className="text-blue-400 font-semibold text-sm">⏳ {matchTime}</span>
           )}
         </div>
-
-        {/* Column 3: Away Team */}
-        <div className="flex items-center space-x-2 justify-end">
-          <span className="text-white font-medium text-xs">{match.match_awayteam_name}</span>
-          <img src={match.team_away_badge} alt="Away" className="w-6 h-6 rounded-full" />
-        </div>
-      </motion.div>
+      </div>
     );
   };
 
   const renderMatchesByLeague = (matches, isLive = false, isFinished = false) => {
     const groupedMatches = groupByLeague(matches);
-    return Object.keys(groupedMatches).map((league) => {
-      // Retrieve the first match of the group to extract league and host country details
-      const firstMatch = groupedMatches[league][0];
-      // League logo (if needed) can be shown separately if required
-      const leagueLogo = firstMatch.league_logo;
-      const countryLogo = firstMatch.country_logo;
-      const countryName = firstMatch.country_name;
+    const allLeagues = Object.keys(groupedMatches);
+
+    const orderedLeagues = [
+      ...allLeagues.filter((league) => {
+        const leagueId = groupedMatches[league][0].league_id;
+        return pinnedLeagues.includes(leagueId);
+      }),
+      ...allLeagues.filter((league) => {
+        const leagueId = groupedMatches[league][0].league_id;
+        return !pinnedLeagues.includes(leagueId);
+      }),
+    ];
+
+    const uniqueLeagueIds = new Set();
+
+    return orderedLeagues.map((league) => {
+      const leagueSample = groupedMatches[league][0];
+      const leagueId = leagueSample.league_id;
+      const leagueFlag = leagueSample.country_logo || "";
+
+      if (uniqueLeagueIds.has(leagueId)) {
+        return null;
+      }
+      uniqueLeagueIds.add(leagueId);
 
       return (
-        <div key={league} className="mb-6">
-          <div className="flex items-center space-x-2 mb-2">
-            {/* Show host country flag if available */}
-            {countryLogo && (
-              <img
-                src={countryLogo}
-                alt={countryName}
-                className="w-6 h-6 object-cover rounded-full"
-              />
+        <div
+          key={`${leagueId}-${league}`}
+          className="mb-6"
+          onMouseEnter={() => setHoveredLeague(leagueId)}
+          onMouseLeave={() => setHoveredLeague(null)}
+        >
+          <h2 className="text-white text-sm font-bold mb-2 flex items-center gap-2">
+            {leagueFlag ? (
+              <img src={leagueFlag} alt={league} className="w-6 h-6 object-cover rounded-full" />
+            ) : (
+              <span className="text-2xl">🌍</span>
             )}
-            <h2 className="text-white text-sm font-bold">
-              {countryName ? `${countryName.toUpperCase()} : ${league}` : league}
-            </h2>
-          </div>
-          <div className="space-y-4">
-            {groupedMatches[league].map((match) => renderMatchItem(match, isLive, isFinished))}
+            {league}
+            <span
+              className="cursor-pointer"
+              onClick={() => togglePinLeague(leagueId)}
+            >
+              {(pinnedLeagues.includes(leagueId) || hoveredLeague === leagueId) && "📌"}
+            </span>
+          </h2>
+          <div className="flex flex-col gap-2">
+            {groupedMatches[league].map((match) =>
+              renderMatchItem(match, isLive, isFinished)
+            )}
           </div>
         </div>
       );
-    });
+    }).filter(Boolean);
   };
 
   return (
-    <div className="w-2/3 pr-4">
-      <Box sx={{ width: "100%", typography: "body1" }}>
-        <TabContext value={value}>
-          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-            <TabList
-              onChange={handleChange}
-              aria-label="Football Matches Tabs"
-              textColor="inherit"
-              indicatorColor="secondary"
-            >
-              <Tab label="Live" value="1" />
-              <Tab label="Upcoming" value="2" />
-              <Tab label="Finished" value="3" />
-            </TabList>
-          </Box>
+    <div className={className}>
+      <div className="flex space-x-2 mb-4">
+        {["Live", "Upcoming", "Finished"].map((label, index) => (
+          <button
+            key={label}
+            onClick={() => setValue((index + 1).toString())}
+            className={`px-2 py-1 rounded-lg font-semibold cursor-pointer ${
+              value === (index + 1).toString() ? "bg-blue-500 text-white" : "bg-gray-800 text-gray-300"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
 
-          {loading ? (
-            <div className="flex justify-center items-center h-96">
-              <CircularProgress />
-            </div>
-          ) : (
-            <AnimatePresence mode="wait">
-              <TabPanel value="1">
-                <div className="space-y-4 h-104 overflow-y-scroll" style={{ scrollbarWidth: "none" }}>
-                  {liveMatches.length > 0 ? (
-                    renderMatchesByLeague(liveMatches, true)
-                  ) : (
-                    <p className="text-gray-400 text-sm">No live matches available.</p>
-                  )}
-                </div>
-              </TabPanel>
-
-              <TabPanel value="2">
-                <div className="space-y-4 h-104 overflow-y-scroll" style={{ scrollbarWidth: "none" }}>
-                  {upcomingMatches.length > 0 ? (
-                    renderMatchesByLeague(upcomingMatches)
-                  ) : (
-                    <p className="text-gray-400 text-sm">No upcoming matches.</p>
-                  )}
-                </div>
-              </TabPanel>
-
-              <TabPanel value="3">
-                <div className="space-y-6 h-104 overflow-y-scroll" style={{ scrollbarWidth: "none" }}>
-                  {finishedMatches.length > 0 ? (
-                    renderMatchesByLeague(finishedMatches, false, true)
-                  ) : (
-                    <p className="text-gray-400 text-sm">No finished matches.</p>
-                  )}
-                </div>
-              </TabPanel>
-            </AnimatePresence>
-          )}
-        </TabContext>
-      </Box>
+      {loading ? (
+        <CircularProgress />
+      ) : (
+        <div className="space-y-6 h-110 overflow-y-scroll" style={{ scrollbarWidth: "none" }}>
+          {/* <AnimatePresence> */}
+            {value === "1" && renderMatchesByLeague(liveMatches, true)}
+            {value === "2" && renderMatchesByLeague(upcomingMatches )}
+            {value === "3" && renderMatchesByLeague(finishedMatches, false, true)}
+         {/*  </AnimatePresence> */}
+        </div>
+      )}
     </div>
   );
 };

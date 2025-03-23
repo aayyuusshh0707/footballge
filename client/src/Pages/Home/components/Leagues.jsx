@@ -1,90 +1,116 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { usePinnedLeagues } from "../../../hook/PinnedLeaguesContext";
+import { API_URL } from "../../../api/api";
 
-const OngoingLeagues = () => {
-  const [leagues, setLeagues] = useState([]);
-  const [loading, setLoading] = useState(true);
+const PinnedLeagues = () => {
 
-  // Replace with your actual API key
-  const API_KEY =
-    "e707a9fba8b84e15880fc90307ba2640653124faa7f886c2b00ad099e44b857a";
-  const BASE_URL = `https://apiv3.apifootball.com/?action=get_events&APIkey=${API_KEY}`;
+  const [pinnedMatches, setPinnedMatches] = useState([]);
+  const [leagueData, setLeagueData] = useState([]);
+  const { pinnedLeagues, setPinnedLeagues } = usePinnedLeagues();
 
   useEffect(() => {
-    const fetchTodayMatches = async () => {
+    const fetchPinnedLeagues = async () => {
       try {
+        const leagueIds = pinnedLeagues;
+        //  console.log("Pinned League IDs from context:", leagueIds);
+
+        if (!leagueIds.length) {
+          setLeagueData([]);
+          setPinnedMatches([]);
+          return;
+        }
+
         const today = new Date();
         const formatDate = (date) => date.toISOString().split("T")[0];
+        const fromDate = formatDate(today);
+        const toDate = formatDate(new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000));
 
-        // Fetch matches scheduled for today by setting from and to as today's date
-        const response = await axios.get(
-          `${BASE_URL}&from=${formatDate(today)}&to=${formatDate(today)}`
-        );
-        const matches = response.data;
+        const matchPromises = leagueIds.map((id) => {
+          const url = `${API_URL}&league_id=${id}&from=${fromDate}&to=${toDate}`;
+          //console.log("Fetching matches for URL:", url);
+          return axios.get(url);
+        });
 
-        if (Array.isArray(matches)) {
-          // Use a Map to extract unique leagues based on league_id
-          const leagueMap = new Map();
+        const matchResponses = await Promise.all(matchPromises);
+        const allMatches = matchResponses
+          .flatMap((res) => res.data || [])
+          .filter(Boolean);
 
-          matches.forEach((match) => {
-            const { league_id, league_name, league_logo, country_name, country_logo } = match;
-            if (!leagueMap.has(league_id)) {
-              leagueMap.set(league_id, { league_id, league_name, league_logo, country_name, country_logo });
-            }
-          });
+        console.log("All Matches from API:", allMatches);
 
-          setLeagues([...leagueMap.values()]);
+        if (!allMatches.length) {
+          setLeagueData([]);
+          setPinnedMatches([]);
+          return;
         }
+
+        const leaguesMap = new Map();
+        allMatches.forEach((match) => {
+          if (!leaguesMap.has(match.league_id)) {
+            leaguesMap.set(match.league_id, {
+              league_id: match.league_id,
+              league_name: match.league_name || "Unknown League",
+              league_logo: match.league_logo || "https://via.placeholder.com/150",
+            });
+          }
+        });
+
+        const leagues = Array.from(leaguesMap.values());
+        //console.log("Processed League Data:", leagues);
+
+        setPinnedMatches(allMatches);
+        setLeagueData(leagues);
       } catch (error) {
-        console.error("Error fetching today's matches:", error);
-      } finally {
-        setLoading(false);
+        console.error("Error fetching pinned leagues:", {
+          message: error.message,
+          status: error.response?.status,
+          data: error.response?.data,
+        });
+        setLeagueData([]);
+        setPinnedMatches([]);
       }
     };
 
-    fetchTodayMatches();
-  }, []);
+    fetchPinnedLeagues();
+  }, [pinnedLeagues]);
 
-  // Format the display so that the host country flag and name appear before a colon, then the league name.
-  const formatLeagueDisplay = (league) => {
-    const host = league.country_name ? league.country_name.toUpperCase() : "";
-    return `${host} : ${league.league_name}`;
+  const handleUnpinLeague = (leagueId) => {
+    setPinnedLeagues((prev) => prev.filter((id) => id !== leagueId));
   };
 
-  if (loading) {
-    return (
-      <div className="p-4 flex justify-center items-center h-32">
-        <p className="text-gray-300">Loading today's leagues...</p>
-      </div>
-    );
-  }
-
   return (
-    <div
-      className="bg-gray-800 mt-3 rounded-lg p-4 text-center flex-1 overflow-scroll "
-      style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-    >
-
-      {leagues.length === 0 ? (
-        <p className="text-gray-300">No leagues found for today.</p>
+    <div>
+      <h6 className="text-[16px] flex mb-5 text-white">Pinned Leagues 📌</h6>
+      {leagueData.length === 0 ? (
+        <p className="text-gray-400">No pinned leagues available</p>
       ) : (
-        <div className="flex flex-col gap-4 h-96">
-          {leagues.map((league) => (
+        <div className="flex flex-col gap-2 h-110 overflow-y-scroll" style={{ scrollbarWidth: "none" }}>
+          {leagueData.map((league) => (
             <div
               key={league.league_id}
-              className="bg-gray-700 p-4 rounded-lg shadow flex items-center space-x-2 "
+              className="bg-gray-700 flex items-center p-1 rounded-2xl overflow-hidden shadow-lg"
             >
-              {/* Show host country flag if available */}
-              {league.country_logo && (
-                <img
-                  src={league.country_logo}
-                  alt={league.country_name}
-                  className="w-8 h-8 object-cover rounded-full"
-                />
-              )}
-              <span className="text-white text-sm font-semibold">
-                {formatLeagueDisplay(league)}
-              </span>
+              <img
+                src={league.league_logo}
+                alt={league.league_name}
+                className="h-9 rounded-full object-cover"
+                onError={(e) => {
+                  e.target.src = "https://via.placeholder.com/150";
+                }}
+              />
+              <div className="p-2 text-white flex items-center justify-between w-full">
+                <span className="text-sm font-semibold">
+                  {league.league_name || "Unknown League"}
+                </span>
+                <button
+                  onClick={() => handleUnpinLeague(league.league_id)}
+                  className="text-red-400 hover:text-red-600 text-sm font-semibold cursor-pointer"
+                  title="Unpin League"
+                >
+                  ❌
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -93,4 +119,4 @@ const OngoingLeagues = () => {
   );
 };
 
-export default OngoingLeagues;
+export default PinnedLeagues;

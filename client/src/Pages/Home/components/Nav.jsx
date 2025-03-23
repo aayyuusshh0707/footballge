@@ -19,9 +19,9 @@ export default function Nav() {
 
   return (
     <div>
-      <nav className="flex items-center md:px-14 py-2 gap-5 justify-center md:justify-start md:gap-19  ">
+      <nav className="flex items-center md:px-14 pt-2 gap-5 justify-center md:justify-start md:gap-19  ">
         <div className="flex items-center space-x-1">
-          <img src="" alt="Logo" className="h-8 md:h-12" />
+          <img src={logo} alt="Logo" className="h-8 md:h-12" />
         </div>
         <div className="flex space-x-1">
           <a href={links.cricket} className="bg-gray-600 text-white font-semibold px-3 py-1 rounded-full cursor-pointer text-xs sm:text-sm md:text-base">Cricket</a>

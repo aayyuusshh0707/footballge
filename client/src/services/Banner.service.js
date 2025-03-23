@@ -1,5 +1,4 @@
-const BASE_URI = 'http://localhost:8000'; // Replace with your actual base URI
-
+import { BASE_URI } from "../api/api";
 const modifyUrl = (banner) => {
   if (banner?.file_url) {
     return {
@@ -34,12 +33,16 @@ export const fetchBanners = async () => {
       fetch(`${BASE_URI}/api/mobile-sidelongbanner/get`),
     ]);
 
-    const jsonResponses = await Promise.all(responses.map(async (res, index) => {
-      if (!res.ok) {
-        throw new Error(`Failed to fetch API ${index + 1}: ${res.statusText}`);
-      }
-      return res.json();
-    }));
+    const jsonResponses = await Promise.all(
+      responses.map(async (res, index) => {
+        if (!res.ok) {
+          throw new Error(
+            `Failed to fetch API ${index + 1}: ${res.statusText}`
+          );
+        }
+        return res.json();
+      })
+    );
 
     return {
       desktopBanner: modifyUrl(jsonResponses[0]),

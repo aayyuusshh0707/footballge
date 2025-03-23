@@ -29,9 +29,6 @@ export default function Layout() {
   // Screen size state
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
-  // const handleChange = (event, newValue) => {
-  //   setValue(newValue);
-  // };
 
   // Update screen width on resize
   useEffect(() => {
@@ -84,15 +81,16 @@ export default function Layout() {
   return (
     <>
       {/* DESKTOP LAYOUT (3-column) */}
-      <div className="hidden md:grid grid-cols-4 gap-4 mx-auto   h-full p-6" style={{ gridAutoRows: '1fr'  }}>
+      <div className="hidden md:grid grid-cols-4 gap-4     h-full p-6" style={{ gridAutoRows: '1fr' }}>
         {/* Left Sidebar */}
         <aside className="col-span-1 flex flex-col space-y-4">
           <div className="bg-gray-800 rounded-lg p-4 text-center h-36">
             Featured Match
           </div>
-          <div className="bg-gray-800 rounded-lg p-4 text-center flex-1 ">
-            <h6 className='text-[16px] pl-4 flex  text-white'>Ongoing Leagues</h6>
+          <div className="bg-gray-800 rounded-lg p-4  text-center flex-1 ">
+          
             <LeaguesList />
+            
           </div>
         </aside>
 
@@ -122,7 +120,7 @@ export default function Layout() {
           </div>
           <div className="bg-gray-800 rounded-lg p-4 h-96 flex-grow flex">
 
-            <MatchesComponent class="w-2/3 pr-4" />
+            <MatchesComponent className="w-2/3 pr-4" />
 
             {/* Right Section - Image */}
             <div className=" w-1/3 pt-10">
@@ -244,7 +242,7 @@ export default function Layout() {
               )}
             </div>
             <div className="bg-gray-800 text-center p-4 h-18 rounded-2xl">
-              Pinned Match
+              Featured Match
             </div>
           </div>
           <div className="text-center col-span-2 max-h-40 rounded-2xl">
@@ -271,21 +269,7 @@ export default function Layout() {
         </div>
 
         {/* Match Section */}
-        {/* <Box sx={{ width: '100%', typography: 'body1' }}>
-          <TabContext value={value}>
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-              <TabList onChange={handleChange} aria-label="lab API tabs example">
-                <Tab label="Live" value="1" />
-                <Tab label="Upcoming" value="2" />
-                <Tab label="Finished" value="3" />
-              </TabList>
-            </Box>
-            <TabPanel value="1">Item One</TabPanel>
-            <TabPanel value="2">Item Two</TabPanel>
-            <TabPanel value="3">Item Three</TabPanel>
-          </TabContext>
-        </Box> */}
-        <MatchesComponent />
+        <MatchesComponent className={"bg-gray-800 rounded-2xl p-2"} />
 
         {/* Bottom Section */}
         <div className="grid grid-cols-3 space-x-1">
@@ -298,13 +282,13 @@ export default function Layout() {
                     autoPlay
                     loop
                     muted
-                    className="w-full h-40 object-cover rounded-2xl"
+                    className="w-full h-30 object-cover rounded-2xl"
                   />
                 ) : (
                   <img
                     src={getBanner(longBanner, ipadLongBanner, mobileLongBanner).file_url}
                     alt="Banner"
-                    className="w-full h-40 object-cover rounded-2xl"
+                    className="w-full h-30 object-cover rounded-2xl"
                   />
                 )}
               </>
@@ -319,13 +303,13 @@ export default function Layout() {
                     autoPlay
                     loop
                     muted
-                    className="w-full h-40 object-cover rounded-2xl"
+                    className="w-full h-30 object-cover rounded-2xl"
                   />
                 ) : (
                   <img
                     src={getBanner(sidebarTwoBanner, ipadSidebarTwoBanner, mobileSidebarTwoBanner).file_url}
                     alt="Banner"
-                    className="w-full h-40 object-cover rounded-2xl"
+                    className="w-full h-30 object-cover rounded-2xl"
                   />
                 )}
               </>
