@@ -1,4 +1,4 @@
-const { pool } = require("../../db/db");
+const { pool } = require("../db/db");
 
 const buttononeController = {
   ensureTableExists: async () => {
@@ -264,4 +264,8 @@ const buttonThreeController = {
   },
 };
 
-module.exports = buttononeController;
+module.exports = {
+  buttononeController,
+  buttonTwoController,
+  buttonThreeController,
+};

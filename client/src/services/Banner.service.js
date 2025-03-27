@@ -1,4 +1,4 @@
-import { BASE_URI } from "../api/api";
+import { BASE_URI } from "./Api.service";
 const modifyUrl = (banner) => {
   if (banner?.file_url) {
     return {

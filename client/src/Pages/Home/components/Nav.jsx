@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import logo from '../../../assets/footballge.png';
-import { BASE_URI } from '../../../api/api';
+import { BASE_URI } from '../../../services/Api.service';
 
 export default function Nav() {
   const [links, setLinks] = useState({ cricket: '#', casino: '#', tournaments: '#' });
 
   useEffect(() => {
     Promise.all([
-      fetch(`${BASE_URI}/api/button-one/getlink`).then(res => res.json()),
-      fetch(`${BASE_URI}/api/button-two/getlink`).then(res => res.json()),
-      fetch(`${BASE_URI}/api/button-three/getlink`).then(res => res.json())
+      fetch(`${BASE_URI}/api/nav-button/one-get`).then(res => res.json()),
+      fetch(`${BASE_URI}/api/nav-button/two-get`).then(res => res.json()),
+      fetch(`${BASE_URI}/api/nav-button/three-get`).then(res => res.json())
     ])
       .then(([cricket, casino, tournaments]) => {
         setLinks({ cricket: cricket.url, casino: casino.url, tournaments: tournaments.url });
