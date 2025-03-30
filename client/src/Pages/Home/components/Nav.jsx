@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import logo from '../../../assets/footballge.png';
 import { BASE_URI } from '../../../services/Api.service';
@@ -18,17 +19,21 @@ export default function Nav() {
   }, []);
 
   return (
-    <div>
-      <nav className="flex items-center md:px-14 pt-2 gap-5 justify-center md:justify-start md:gap-19  ">
-        <div className="flex items-center space-x-1">
-          <img src={logo} alt="Logo" className="h-8 md:h-12" />
-        </div>
-        <div className="flex space-x-1">
-          <a href={links.cricket} className="bg-gray-600 text-white font-semibold px-3 py-1 rounded-full cursor-pointer text-xs sm:text-sm md:text-base">Cricket</a>
-          <a href={links.casino} className="bg-gray-600 text-white font-semibold px-3 py-1 rounded-full cursor-pointer text-xs sm:text-sm md:text-base">Casino</a>
-          <a href={links.tournaments} className="bg-gray-600 text-white font-semibold px-3 py-1 rounded-full cursor-pointer text-xs sm:text-sm md:text-base">Play</a>
-        </div>
-      </nav>
-    </div>
+    <nav className="flex w-full items-center p-1  md:p-3 ">
+      <img src={logo} alt="Logo" className="h-8 md:h-14" />
+      {/* <div className="flex items-center gap-2 md:gap-5 sm:ml-auto ml-0 justify-start "> */}
+      <div className="flex items-center gap-2 md:ml-10 ml-auto overflow-x-auto whitespace-nowrap">
+
+        <a href={links.cricket} className="bg-[#131212] text-white font-semibold px-3 md:px-6 py-1 rounded-full text-xs sm:text-sm md:text-base lg:text-lg">
+          Cricket
+        </a>
+        <a href={links.casino} className="bg-[#131212] text-white font-semibold px-3 md:px-6 py-1 rounded-full text-xs sm:text-sm md:text-base lg:text-lg">
+          Casino
+        </a>
+        <a href={links.tournaments} className="bg-[#131212] text-white font-semibold px-3 md:px-6 py-1 rounded-full text-xs sm:text-sm md:text-base lg:text-lg">
+          Play
+        </a>
+      </div>
+    </nav>
   );
 }

@@ -5,9 +5,10 @@ import Nav from './components/Nav.jsx'
 export default function Home() {
   return (
     <>
-      <div className='bg-gray-200 h-screen'>
+      <div className='bg-gray-200 h-full'>
         <Nav />
-        <Layout /></div>
+        <Layout />
+      </div>
 
     </>
   )

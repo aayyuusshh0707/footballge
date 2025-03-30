@@ -75,7 +75,7 @@ const MatchesComponent = ({ className, banner, screenWidth }) => {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -10 }}
-        className={`bg-[#2F2D2D] rounded-xl p-4 grid ${isMobile ? "grid-cols-2" : "grid-cols-3"} items-center shadow-xl gap-4 cursor-pointer`}
+        className={`bg-[#2F2D2D] rounded-[30px] p-4 grid ${isMobile ? "grid-cols-2" : "grid-cols-3"} items-center shadow-xl gap-4 cursor-pointer`}
         onClick={() => setSelectedMatch(match)}
       >
         <div className="flex flex-col space-y-2">
@@ -204,7 +204,8 @@ const MatchesComponent = ({ className, banner, screenWidth }) => {
 
 
   return (
-    <div className={`bg-[#131212] rounded-lg p-4 flex flex-col ${className}`}>
+    <div 
+     className={`bg-[#131212] rounded-lg p-4 flex flex-col ${className}`}>
       <div className="w-full relative">
         {loading ? (
           <div className="flex justify-center items-center h-full">
@@ -225,7 +226,7 @@ const MatchesComponent = ({ className, banner, screenWidth }) => {
                     {/* Left Section: Matches */}
                     <div className="w-2/3 pr-4">
                       <div
-                        className="space-y-6 h-110 overflow-y-scroll"
+                        className="space-y-6 h-[calc(95vh-200px)] overflow-y-scroll "
                         style={{ scrollbarWidth: "none" }}
                       >
                         {tab === MATCH_TABS.LIVE && (

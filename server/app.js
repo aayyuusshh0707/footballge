@@ -85,7 +85,7 @@ app.use("/api/mobile-sidelongbanner", MobilesidelongbannerRoute);
 const buttonRoute = require("./src/routes/navbuttons.route");
 // const PinMatch = require("./src/routes/pinnedmatch.route");
 // const PinLeague = require("./src/routes/pinnedleauge.route");
-// const FeaturedMatch = require("./src/routes/featuredmatch.route");
+const FeaturedMatch = require("./src/routes/featuredmatch.route");
 
 // //banners
 // app.use("/api/desktop", desktopRoute);
@@ -100,6 +100,6 @@ app.use("/api/nav-button", buttonRoute);
 // app.use("/api/league", PinLeague);
 
 // //featured matche
-// app.use("/api/featured", FeaturedMatch);
+app.use("/api/featured", FeaturedMatch);
 
 module.exports = app;
